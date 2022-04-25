@@ -1,0 +1,81 @@
+{
+  "name": "nextjs-apollo-client",
+  "version": "0.1.0",
+  "author": "Frank Cooke",
+  "description": "Easy setup Next.js getServerSideProps/getStaticProps for Apollo GraphQL",
+  "keywords": [
+    "next.js",
+    "ssr",
+    "ssg",
+    "graphql",
+    "apollo",
+    "client",
+    "cache"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/platypusrex/nextjs-apollo.git"
+  },
+  "bugs": {
+    "url": "https://github.com/platypusrex/nextjs-apollo/issues"
+  },
+  "homepage": "https://github.com/platypusrex/nextjs-apollo/#readme",
+  "main": "dist/index.js",
+  "typings": "dist/index.d.ts",
+  "module": "dist/test.esm.js",
+  "files": [
+    "dist",
+    "src"
+  ],
+  "engines": {
+    "node": ">=14.15.4"
+  },
+  "scripts": {
+    "start": "tsdx watch",
+    "build": "tsdx build",
+    "test": "tsdx test",
+    "lint": "tsdx lint",
+    "lint:fix": "tsdx lint --fix",
+    "prepare": "tsdx build",
+    "size": "size-limit",
+    "analyze": "size-limit --why",
+    "check:types": "tsc --noEmit"
+  },
+  "size-limit": [
+    {
+      "path": "dist/test.cjs.production.min.js",
+      "limit": "10 KB"
+    },
+    {
+      "path": "dist/test.esm.js",
+      "limit": "10 KB"
+    }
+  ],
+  "peerDependencies": {
+    "@apollo/client": ">=3.x",
+    "next": ">=10.x",
+    "react": ">=16.8.x"
+  },
+  "dependencies": {
+    "deepmerge": "^4.2.2",
+    "lodash-es": "^4.17.21",
+    "lodash.isequal": "^4.5.0"
+  },
+  "devDependencies": {
+    "@apollo/client": "^3.5.10",
+    "@commitlint/cli": "^16.2.3",
+    "@commitlint/config-conventional": "^16.2.1",
+    "@size-limit/preset-small-lib": "^7.0.8",
+    "@types/lodash.isequal": "^4.5.6",
+    "@types/react": "^18.0.6",
+    "husky": "^7.0.4",
+    "next": "latest",
+    "react": "^18.0.0",
+    "size-limit": "^7.0.8",
+    "standard-version": "^9.3.2",
+    "tsdx": "^0.14.1",
+    "tslib": "^2.4.0",
+    "typescript": "^4.6.3"
+  },
+  "license": "MIT"
+}
