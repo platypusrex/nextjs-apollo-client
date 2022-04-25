@@ -1,3 +1,3 @@
-# nextjs-apollo
+# nextjs-apollo-client
 
 Documentation coming soon...
