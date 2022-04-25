@@ -9,8 +9,8 @@ import { USER_QUERY, USERS_QUERY } from '../gql';
 import { UserFragment } from '../types/generated';
 
 interface HomeProps {
-  user?: UserFragment;
-  users?: UserFragment[];
+  user?: UserFragment | null;
+  users?: UserFragment[] | null;
 }
 
 const Home: NextPage<HomeProps> = () => {
@@ -68,7 +68,7 @@ export const getServerSideProps = getServerSideApolloProps<HomeProps>({
 
     return {
       props: {
-        user: result?.data.user,
+        user: result?.data.user ?? null,
       }
     }
   },
@@ -76,7 +76,7 @@ export const getServerSideProps = getServerSideApolloProps<HomeProps>({
     const result = results?.find(result => result.data.users);
     return {
       props: {
-        users: result?.data.users || null,
+        users: result?.data.users ?? null,
       }
     }
   }

@@ -1,7 +1,7 @@
 import { ApolloClient, HttpLink, InMemoryCache, QueryOptions } from '@apollo/client';
-import { generateHydrationMap, NextApolloClient } from 'nextjs-apollo';
-import { USERS_QUERY, USER_QUERY } from '../../gql';
+import { generateHydrationMap, NextApolloClient, NextApolloClientOptions } from 'nextjs-apollo-client';
 import { UserQuery, UserQueryVariables, UsersQuery, UsersQueryVariables } from '../../types/generated';
+import { USERS_QUERY, USER_QUERY } from '../../gql';
 
 const hydrationMap = generateHydrationMap({
   users: (): QueryOptions<UsersQueryVariables, UsersQuery> => ({
@@ -15,11 +15,8 @@ const hydrationMap = generateHydrationMap({
   })
 });
 
-export const { getServerSideApolloProps, useApolloClient } = new NextApolloClient<
-  typeof hydrationMap
->({
-  hydrationMap,
-  apolloClient: (headers) => new ApolloClient({
+const apolloClient: NextApolloClientOptions['apolloClient'] = (headers) =>
+  new ApolloClient({
     ssrMode: typeof window === 'undefined',
     cache: new InMemoryCache(),
     link: new HttpLink({
@@ -27,4 +24,10 @@ export const { getServerSideApolloProps, useApolloClient } = new NextApolloClien
       headers,
     }),
   })
+
+export const { getServerSideApolloProps, useApolloClient } = new NextApolloClient<
+  typeof hydrationMap
+>({
+  hydrationMap,
+  apolloClient
 });
