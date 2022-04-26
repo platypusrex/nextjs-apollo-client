@@ -21,12 +21,12 @@ export interface NextApolloClientOptions {
     initialState: NormalizedCacheObject,
     headers?: IncomingHttpHeaders | null
   ) => ApolloClient<NormalizedCacheObject>;
-  hydrationMap: QueryHydrationMap;
+  hydrationMap?: QueryHydrationMap;
 }
 
 export class NextApolloClient<THydrationMap extends QueryHydrationMap> {
   private readonly _client!: NextApolloClientOptions['apolloClient'];
-  private readonly _hydrationMap!: NextApolloClientOptions['hydrationMap'];
+  private readonly _hydrationMap?: NextApolloClientOptions['hydrationMap'];
 
   constructor({ apolloClient, hydrationMap }: NextApolloClientOptions) {
     this._client = apolloClient;
@@ -100,11 +100,14 @@ export class NextApolloClient<THydrationMap extends QueryHydrationMap> {
       if (redirect) return { redirect };
     }
 
-    if (hydrateQueries) {
+    if (hydrateQueries?.length) {
       const queries = Array.isArray(hydrateQueries) ? hydrateQueries : hydrateQueries(ctx);
       const queryResults = await Promise.allSettled(
         (queries as any[]).map(query => {
-          const queryOptions = typeof query === 'string' ? this._hydrationMap[query](ctx) : query;
+          const queryOptions =
+            !!this._hydrationMap && typeof query === 'string'
+              ? this._hydrationMap[query](ctx)
+              : query;
           return apolloClient.query(queryOptions);
         })
       );
