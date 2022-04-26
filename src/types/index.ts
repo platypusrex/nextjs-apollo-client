@@ -11,7 +11,7 @@ import {
 import { APOLLO_STATE_PROP_NAME } from '../constants';
 
 // initialize apollo types
-type InitialState = NormalizedCacheObject | undefined;
+export type InitialState = NormalizedCacheObject | undefined;
 
 export interface InitializeApolloArgs {
   headers?: IncomingHttpHeaders | null;
@@ -19,9 +19,9 @@ export interface InitializeApolloArgs {
 }
 
 // getServerSideProps types
-export type HydrationResults<TProps> = {
+export type HydrationResults = {
   errors?: ApolloError[];
-  results?: ApolloQueryResult<TProps>[];
+  results?: ApolloQueryResult<any>[];
 };
 
 export type HydrateQueries<THydrationMap> =
@@ -30,6 +30,8 @@ export type HydrateQueries<THydrationMap> =
   | ((ctx: GetServerSidePropsContext) => PureQueryOptions[]);
 
 export type ServerSidePropsResult<TProps> =
+  | void
+  | Promise<void>
   | Promise<GetServerSidePropsResult<TProps>>
   | GetServerSidePropsResult<TProps>;
 
@@ -39,13 +41,12 @@ export type ClientInitFn<TProps> = (
 ) => ServerSidePropsResult<TProps>;
 
 export interface GetServerSideApolloPropsOptions<
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   TProps = Record<string, any> & GetServerSideApolloProps,
   THydrationMap = never
 > {
   hydrateQueries?: HydrateQueries<THydrationMap>;
   onClientInitialized?: ClientInitFn<TProps>;
-  onHydrationResults?: (results: HydrationResults<TProps>) => void | ServerSidePropsResult<TProps>;
+  onHydrationComplete?: (results: HydrationResults) => ServerSidePropsResult<TProps>;
 }
 
 export interface GetServerSideApolloProps {
