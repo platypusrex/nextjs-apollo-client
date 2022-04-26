@@ -15,15 +15,15 @@ const hydrationMap = generateHydrationMap({
   })
 });
 
-const apolloClient: NextApolloClientOptions['apolloClient'] = (headers) =>
+const apolloClient: NextApolloClientOptions['apolloClient'] = (initialState, headers) =>
   new ApolloClient({
     ssrMode: typeof window === 'undefined',
-    cache: new InMemoryCache(),
+    cache: new InMemoryCache().restore(initialState),
     link: new HttpLink({
       uri: 'http://localhost:3000/api/graphql',
       headers,
     }),
-  })
+  });
 
 export const { getServerSideApolloProps, useApolloClient } = new NextApolloClient<
   typeof hydrationMap

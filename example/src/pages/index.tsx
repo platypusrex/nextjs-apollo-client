@@ -5,16 +5,23 @@ import Link from 'next/link';
 import styles from '../styles/Home.module.css'
 import { useQuery } from '@apollo/client';
 import { getServerSideApolloProps } from '../lib/apollo';
-import { USER_QUERY, USERS_QUERY } from '../gql';
-import { UserFragment } from '../types/generated';
+import { generateUsers } from '../mocks';
+import { CREATE_USER, USERS_QUERY } from '../gql';
+import {
+  CreateUserMutation,
+  CreateUserMutationVariables,
+  UserFragment,
+  UserQueryVariables,
+  UsersQuery
+} from '../types/generated';
 
 interface HomeProps {
-  user?: UserFragment | null;
   users?: UserFragment[] | null;
 }
 
 const Home: NextPage<HomeProps> = () => {
-  const { data } = useQuery(USERS_QUERY);
+  const { data } = useQuery<UsersQuery, UserQueryVariables>(USERS_QUERY);
+
   return (
     <div className={styles.container}>
       <Head>
@@ -26,14 +33,18 @@ const Home: NextPage<HomeProps> = () => {
       <main className={styles.main}>
         <h1 className={styles.title}>User List</h1>
 
+        <Link href="/create-user">
+          <a className={styles.card}>Create user</a>
+        </Link>
+
         <div className={styles.grid}>
-          {data.users?.map((user: any) => (
+          {data?.users?.map((user) => (
             <Link
               href={{ pathname: '/profile/[userId]', query: { userId: user.id } }}
               key={user.id}
             >
               <a className={styles.card}>
-                <h2 style={{ margin: 0 }}>{user.name}</h2>
+                <h2 style={{ margin: 0 }}>{user.firstName} {user.lastName}</h2>
               </a>
             </Link>
           ))}
@@ -59,20 +70,31 @@ const Home: NextPage<HomeProps> = () => {
 export const getServerSideProps = getServerSideApolloProps<HomeProps>({
   hydrateQueries: ['users'],
   onClientInitialized: async (ctx, apolloClient) => {
-    const result = await apolloClient.query({
-      query: USER_QUERY,
-      variables: {
-        id: 1,
-      }
-    });
+    if (ctx.query.addUser) {
+      const { firstName, lastName, username, email, phone } = generateUsers(1)[0];
+      await apolloClient.mutate<CreateUserMutation, CreateUserMutationVariables>({
+        mutation: CREATE_USER,
+        variables: {
+          input: {
+            firstName,
+            lastName,
+            username,
+            email,
+            phone,
+          }
+        }
+      });
 
-    return {
-      props: {
-        user: result?.data.user ?? null,
+      return {
+        redirect: {
+          destination: '/',
+          permanent: false,
+        }
       }
     }
+    return { props: {} };
   },
-  onHydrationResults: ({ results }) => {
+  onHydrationComplete: ({ results }) => {
     const result = results?.find(result => result.data.users);
     return {
       props: {

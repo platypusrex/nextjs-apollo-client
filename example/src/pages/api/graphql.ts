@@ -1,62 +1,49 @@
 import { ApolloServer, gql } from 'apollo-server-micro'
 import { NextApiRequest, NextApiResponse } from 'next';
-
-const users = [
-  {
-    id: 1,
-    name: 'Frank',
-    email: 'fcooke@email.com',
-    phoneNumber: '843-303-6284',
-    age: 42,
-    favoriteColor: 'green'
-  },
-  {
-    id: 2,
-    name: 'Jen',
-    email: 'jcooke@email.com',
-    phoneNumber: '843-303-6284',
-    age: 37,
-    favoriteColor: 'green',
-    favoriteMovie: 'Elf'
-  },
-  {
-    id: 3,
-    name: 'Dylan',
-    email: 'dcooke@email.com',
-    age: 1,
-    favoriteColor: 'green',
-    favoriteMovie: 'Toy Story'
-  },
-  {
-    id: 4,
-    name: 'Dublin',
-    email: 'dublin@email.com',
-    age: 10,
-    favoriteColor: 'grey'
-  },
-  {
-    id: 5,
-    name: 'Miles',
-    email: 'mcooke@email.com',
-    age: 8,
-    favoriteColor: 'green'
-  },
-]
+import { randAvatar } from '@ngneat/falso';
+import { users } from '../../mocks';
+import { randomUUID } from 'crypto';
 
 const typeDefs = gql`
+  type Address {
+    street: String!
+    city: String!
+    zipCode: String!
+  }
+  
   type User {
-    id: Int!
-    name: String!
+    id: ID!
     email: String!
-    phoneNumber: String
-    age: Int!
-    favoriteColor: String
-    favoriteMovie: String
+    firstName: String!
+    lastName: String!
+    username: String!
+    phone: String
+    img: String!
+    address: Address
+  }
+  
+  input AddressInput {
+    street: String!
+    city: String!
+    zipCode: String!
+  }
+  
+  input CreateUserInput {
+    firstName: String!
+    lastName: String!
+    username: String!
+    email: String!
+    phone: String
+    address: AddressInput
   }
   
   type Query {
     users: [User!]!
     user(id: Int!): User
+  }
+  
+  type Mutation {
+    createUser(input: CreateUserInput!): User!
   }
 `
 
@@ -65,6 +52,13 @@ const resolvers = {
     users: () => users,
     user: (_: any, { id }: any) => users.find((user) => user.id === id),
   },
+  Mutation: {
+    createUser: (_: any, { input }: any) => {
+      const newUser = { ...input, id: randomUUID(), img: randAvatar() };
+      users.push(newUser);
+      return newUser;
+    }
+  }
 }
 
 const apolloServer = new ApolloServer({ typeDefs, resolvers })

@@ -29,18 +29,28 @@ const ProfilePage: NextPage<ProfilePageProps> = ({ userId }) => {
 
       <main className={styles.main}>
         <Link href="/">
-          <a className={styles.card}>Back to  <a href="https://nextjs.org">Users</a></a>
+          <a className={styles.card}>Back to Users</a>
         </Link>
 
         {user && (
           <div className={styles.grid}>
             <div className={styles.card}>
-              <h2>{user.name}</h2>
-              <p>{user.email}</p>
-              {user.phoneNumber && <p>{user.phoneNumber}</p>}
-              {user.age && <p>{user.age}</p>}
-              {user.favoriteColor && <p>{user.favoriteColor}</p>}
-              {user.favoriteMovie && <p>{user.favoriteMovie}</p>}
+              <div className={styles.cardImageContainer}>
+                <Image src={user.img} objectFit="cover" layout="fill" />
+              </div>
+              <h2>{user.firstName} {user.lastName}</h2>
+              <div className={styles.cardUserInfo}>
+                <strong>Username</strong>
+                <p>{user.username}</p>
+              </div>
+              <div className={styles.cardUserInfo}>
+                <strong>Email</strong>
+                <p>{user.email}</p>
+              </div>
+              <div className={styles.cardUserInfo}>
+                <strong>Phone</strong>
+                <p>{user.phone}</p>
+              </div>
             </div>
           </div>
         )}
@@ -64,13 +74,13 @@ const ProfilePage: NextPage<ProfilePageProps> = ({ userId }) => {
 
 export const getServerSideProps = getServerSideApolloProps<ProfilePageProps>({
   hydrateQueries: ['user'],
-  onHydrationResults: ({ results }) => {
+  onHydrationComplete: ({ results }) => {
     const result: ApolloQueryResult<UserQuery> | undefined = results?.find(result => result.data.user);
 
     if (!result?.data.user) {
       return {
         redirect: {
-          destination: '/create-user',
+          destination: '/?addUser=true',
           permanent: false,
         }
       }
@@ -78,7 +88,7 @@ export const getServerSideProps = getServerSideApolloProps<ProfilePageProps>({
 
     return {
       props: {
-        userId: result.data.user.id,
+        userId: Number(result.data.user.id),
       }
     }
   }

@@ -17,13 +17,16 @@ import {
 let client: ApolloClient<NormalizedCacheObject> | undefined;
 
 export interface NextApolloClientOptions {
-  apolloClient: (headers?: IncomingHttpHeaders | null) => ApolloClient<NormalizedCacheObject>;
-  hydrationMap: QueryHydrationMap;
+  apolloClient: (
+    initialState: NormalizedCacheObject,
+    headers?: IncomingHttpHeaders | null
+  ) => ApolloClient<NormalizedCacheObject>;
+  hydrationMap?: QueryHydrationMap;
 }
 
 export class NextApolloClient<THydrationMap extends QueryHydrationMap> {
   private readonly _client!: NextApolloClientOptions['apolloClient'];
-  private readonly _hydrationMap!: NextApolloClientOptions['hydrationMap'];
+  private readonly _hydrationMap?: NextApolloClientOptions['hydrationMap'];
 
   constructor({ apolloClient, hydrationMap }: NextApolloClientOptions) {
     this._client = apolloClient;
@@ -36,7 +39,7 @@ export class NextApolloClient<THydrationMap extends QueryHydrationMap> {
       initialState: null,
     }
   ): ApolloClient<NormalizedCacheObject> => {
-    const _apolloClient = client ?? this._client(headers);
+    const _apolloClient = client ?? this._client(initialState ?? {}, headers);
 
     if (initialState) {
       const existingCache = _apolloClient.extract();
@@ -77,7 +80,7 @@ export class NextApolloClient<THydrationMap extends QueryHydrationMap> {
   public getServerSideApolloProps = <TProps = Record<string, any>>({
     hydrateQueries,
     onClientInitialized,
-    onHydrationResults,
+    onHydrationComplete,
   }: GetServerSideApolloPropsOptions<
     TProps,
     (keyof THydrationMap)[]
@@ -89,7 +92,7 @@ export class NextApolloClient<THydrationMap extends QueryHydrationMap> {
 
     if (onClientInitialized) {
       // @ts-ignore
-      const { props, notFound, redirect } = await onClientInitialized(ctx, apolloClient);
+      const { props, notFound, redirect } = (await onClientInitialized(ctx, apolloClient)) ?? {};
       if (props) {
         baseProps = { ...props };
       }
@@ -97,16 +100,19 @@ export class NextApolloClient<THydrationMap extends QueryHydrationMap> {
       if (redirect) return { redirect };
     }
 
-    if (hydrateQueries) {
+    if (hydrateQueries?.length) {
       const queries = Array.isArray(hydrateQueries) ? hydrateQueries : hydrateQueries(ctx);
       const queryResults = await Promise.allSettled(
         (queries as any[]).map(query => {
-          const queryOptions = typeof query === 'string' ? this._hydrationMap[query](ctx) : query;
+          const queryOptions =
+            !!this._hydrationMap && typeof query === 'string'
+              ? this._hydrationMap[query](ctx)
+              : query;
           return apolloClient.query(queryOptions);
         })
       );
 
-      const hydrationResults = queryResults.reduce<HydrationResults<TProps>>((acc, curr) => {
+      const hydrationResults = queryResults.reduce<HydrationResults>((acc, curr) => {
         if (curr.status === 'rejected') {
           acc['errors'] = [...(acc['errors'] ?? []), curr.reason];
         }
@@ -116,9 +122,9 @@ export class NextApolloClient<THydrationMap extends QueryHydrationMap> {
         return acc;
       }, {});
 
-      if (onHydrationResults) {
+      if (onHydrationComplete) {
         // @ts-ignore
-        const { props, notFound, redirect } = onHydrationResults(hydrationResults) ?? {};
+        const { props, notFound, redirect } = onHydrationComplete(hydrationResults) ?? {};
         if (props) {
           baseProps = {
             ...baseProps,

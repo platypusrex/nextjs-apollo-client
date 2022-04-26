@@ -12,6 +12,38 @@ export type Scalars = {
   Float: number;
 };
 
+export type Address = {
+  __typename?: 'Address';
+  city: Scalars['String'];
+  street: Scalars['String'];
+  zipCode: Scalars['String'];
+};
+
+export type AddressInput = {
+  city: Scalars['String'];
+  street: Scalars['String'];
+  zipCode: Scalars['String'];
+};
+
+export type CreateUserInput = {
+  address?: InputMaybe<AddressInput>;
+  email: Scalars['String'];
+  firstName: Scalars['String'];
+  lastName: Scalars['String'];
+  phone?: InputMaybe<Scalars['String']>;
+  username: Scalars['String'];
+};
+
+export type Mutation = {
+  __typename?: 'Mutation';
+  createUser: User;
+};
+
+
+export type MutationCreateUserArgs = {
+  input: CreateUserInput;
+};
+
 export type Query = {
   __typename?: 'Query';
   user?: Maybe<User>;
@@ -25,25 +57,33 @@ export type QueryUserArgs = {
 
 export type User = {
   __typename?: 'User';
-  age: Scalars['Int'];
+  address?: Maybe<Address>;
   email: Scalars['String'];
-  favoriteColor?: Maybe<Scalars['String']>;
-  favoriteMovie?: Maybe<Scalars['String']>;
-  id: Scalars['Int'];
-  name: Scalars['String'];
-  phoneNumber?: Maybe<Scalars['String']>;
+  firstName: Scalars['String'];
+  id: Scalars['ID'];
+  img: Scalars['String'];
+  lastName: Scalars['String'];
+  phone?: Maybe<Scalars['String']>;
+  username: Scalars['String'];
 };
 
-export type UserFragment = { __typename?: 'User', id: number, name: string, email: string, phoneNumber?: string | null, age: number, favoriteColor?: string | null, favoriteMovie?: string | null };
+export type UserFragment = { __typename?: 'User', id: string, firstName: string, lastName: string, username: string, email: string, phone?: string | null, img: string };
+
+export type CreateUserMutationVariables = Exact<{
+  input: CreateUserInput;
+}>;
+
+
+export type CreateUserMutation = { __typename?: 'Mutation', createUser: { __typename?: 'User', id: string, firstName: string, lastName: string, username: string, email: string, phone?: string | null, img: string } };
 
 export type UserQueryVariables = Exact<{
   id: Scalars['Int'];
 }>;
 
 
-export type UserQuery = { __typename?: 'Query', user?: { __typename?: 'User', id: number, name: string, email: string, phoneNumber?: string | null, age: number, favoriteColor?: string | null, favoriteMovie?: string | null } | null };
+export type UserQuery = { __typename?: 'Query', user?: { __typename?: 'User', id: string, firstName: string, lastName: string, username: string, email: string, phone?: string | null, img: string } | null };
 
 export type UsersQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type UsersQuery = { __typename?: 'Query', users: Array<{ __typename?: 'User', id: number, name: string, email: string, phoneNumber?: string | null, age: number, favoriteColor?: string | null, favoriteMovie?: string | null }> };
+export type UsersQuery = { __typename?: 'Query', users: Array<{ __typename?: 'User', id: string, firstName: string, lastName: string, username: string, email: string, phone?: string | null, img: string }> };
