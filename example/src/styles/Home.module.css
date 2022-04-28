@@ -65,12 +65,34 @@
     Bitstream Vera Sans Mono, Courier New, monospace;
 }
 
+.pageGrid {
+  display: grid;
+  grid-template-columns: 1fr 2fr;
+}
+
 .grid {
   display: flex;
   align-items: center;
   justify-content: center;
   flex-wrap: wrap;
   max-width: 800px;
+}
+
+.bookGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+}
+
+.cardLink {
+  margin: 1rem;
+  padding: 1.5rem;
+  text-align: left;
+  color: inherit;
+  text-decoration: none;
+  border: 1px solid #eaeaea;
+  border-radius: 10px;
+  transition: color 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
+  max-width: 300px;
 }
 
 .card {
@@ -81,7 +103,7 @@
   text-decoration: none;
   border: 1px solid #eaeaea;
   border-radius: 10px;
-  transition: color 0.15s ease, border-color 0.15s ease;
+  transition: box-shadow 0.15s ease;
   max-width: 300px;
 }
 
@@ -100,11 +122,16 @@
   margin-top: 0.375rem !important;
 }
 
-.card:hover,
-.card:focus,
-.card:active {
+.cardLink:hover,
+.cardLink:focus,
+.cardLink:active {
+  box-shadow: 0 1px 15px -5px rgba(0, 0, 0, 0.5);
   color: #0070f3;
   border-color: #0070f3;
+}
+
+.card:hover {
+  box-shadow: 0 1px 15px -5px rgba(0, 0, 0, 0.5);
 }
 
 .card h2 {

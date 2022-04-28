@@ -25,6 +25,13 @@ export type AddressInput = {
   zipCode: Scalars['String'];
 };
 
+export type Book = {
+  __typename?: 'Book';
+  author: Scalars['String'];
+  id: Scalars['ID'];
+  title: Scalars['String'];
+};
+
 export type CreateUserInput = {
   address?: InputMaybe<AddressInput>;
   email: Scalars['String'];
@@ -46,13 +53,14 @@ export type MutationCreateUserArgs = {
 
 export type Query = {
   __typename?: 'Query';
+  books: Array<Book>;
   user?: Maybe<User>;
   users: Array<User>;
 };
 
 
 export type QueryUserArgs = {
-  id: Scalars['Int'];
+  id: Scalars['ID'];
 };
 
 export type User = {
@@ -67,6 +75,8 @@ export type User = {
   username: Scalars['String'];
 };
 
+export type BookFragment = { __typename?: 'Book', id: string, title: string, author: string };
+
 export type UserFragment = { __typename?: 'User', id: string, firstName: string, lastName: string, username: string, email: string, phone?: string | null, img: string };
 
 export type CreateUserMutationVariables = Exact<{
@@ -76,8 +86,13 @@ export type CreateUserMutationVariables = Exact<{
 
 export type CreateUserMutation = { __typename?: 'Mutation', createUser: { __typename?: 'User', id: string, firstName: string, lastName: string, username: string, email: string, phone?: string | null, img: string } };
 
+export type BooksQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type BooksQuery = { __typename?: 'Query', books: Array<{ __typename?: 'Book', id: string, title: string, author: string }> };
+
 export type UserQueryVariables = Exact<{
-  id: Scalars['Int'];
+  id: Scalars['ID'];
 }>;
 
 

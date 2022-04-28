@@ -1,37 +1,67 @@
-import { IncomingHttpHeaders } from 'http';
 import merge from 'deepmerge';
 import isEqual from 'lodash/isEqual';
 import { useMemo } from 'react';
 import { AppProps } from 'next/app';
 import { GetServerSideProps, GetServerSidePropsContext, GetServerSidePropsResult } from 'next';
-import { ApolloClient, NormalizedCacheObject } from '@apollo/client';
+import {
+  ApolloClient,
+  ApolloLink,
+  HttpLink,
+  InMemoryCache,
+  NormalizedCacheObject,
+} from '@apollo/client';
 import { APOLLO_STATE_PROP_NAME } from './constants';
 import {
+  ApolloClientConfig,
   GetServerSideApolloProps,
   GetServerSideApolloPropsOptions,
   HydrationResults,
   InitializeApolloArgs,
+  PartialApolloClientOptions,
   QueryHydrationMap,
 } from './types';
 
-let client: ApolloClient<NormalizedCacheObject> | undefined;
+let APOLLO_CLIENT: ApolloClient<NormalizedCacheObject> | undefined;
 
 export interface NextApolloClientOptions {
-  apolloClient: (
-    initialState: NormalizedCacheObject,
-    headers?: IncomingHttpHeaders | null
-  ) => ApolloClient<NormalizedCacheObject>;
+  client: ApolloClientConfig;
   hydrationMap?: QueryHydrationMap;
 }
 
 export class NextApolloClient<THydrationMap extends QueryHydrationMap> {
-  private readonly _client!: NextApolloClientOptions['apolloClient'];
+  private readonly _client!: NextApolloClientOptions['client'];
   private readonly _hydrationMap?: NextApolloClientOptions['hydrationMap'];
 
-  constructor({ apolloClient, hydrationMap }: NextApolloClientOptions) {
-    this._client = apolloClient;
+  constructor({ client, hydrationMap }: NextApolloClientOptions) {
+    this._client = client;
     this._hydrationMap = hydrationMap;
   }
+
+  private createApolloClient = (
+    apolloClient: NextApolloClientOptions['client'],
+    initialState: InitializeApolloArgs['initialState'],
+    headers: InitializeApolloArgs['headers']
+  ) => {
+    if (typeof apolloClient === 'function') {
+      return apolloClient(initialState ?? {}, headers);
+    } else {
+      const {
+        uri,
+        links,
+        cacheOptions,
+        credentials,
+        ...rest
+      } = apolloClient as PartialApolloClientOptions;
+      const httpLink = new HttpLink({ uri, headers, credentials });
+      return new ApolloClient({
+        ssrMode: typeof window === 'undefined',
+        connectToDevTools: typeof window !== 'undefined',
+        link: ApolloLink.from([...(links ?? []), httpLink]),
+        cache: new InMemoryCache(cacheOptions).restore(initialState ?? {}),
+        ...rest,
+      });
+    }
+  };
 
   private initializeApollo = (
     { headers, initialState }: InitializeApolloArgs = {
@@ -39,7 +69,8 @@ export class NextApolloClient<THydrationMap extends QueryHydrationMap> {
       initialState: null,
     }
   ): ApolloClient<NormalizedCacheObject> => {
-    const _apolloClient = client ?? this._client(initialState ?? {}, headers);
+    const _apolloClient =
+      APOLLO_CLIENT ?? this.createApolloClient(this._client, initialState ?? {}, headers);
 
     if (initialState) {
       const existingCache = _apolloClient.extract();
@@ -54,7 +85,7 @@ export class NextApolloClient<THydrationMap extends QueryHydrationMap> {
       _apolloClient.cache.restore(data);
     }
     if (typeof window === 'undefined') return _apolloClient;
-    if (!client) client = _apolloClient;
+    if (!APOLLO_CLIENT) APOLLO_CLIENT = _apolloClient;
 
     return _apolloClient;
   };

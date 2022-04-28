@@ -2,8 +2,11 @@ import { IncomingHttpHeaders } from 'http';
 import { GetServerSidePropsContext, GetServerSidePropsResult } from 'next';
 import {
   ApolloClient,
+  ApolloClientOptions,
   ApolloError,
+  ApolloLink,
   ApolloQueryResult,
+  InMemoryCacheConfig,
   NormalizedCacheObject,
   PureQueryOptions,
   QueryOptions,
@@ -17,6 +20,28 @@ export interface InitializeApolloArgs {
   headers?: IncomingHttpHeaders | null;
   initialState?: InitialState | null;
 }
+
+export type PartialApolloClientOptions = Pick<
+  ApolloClientOptions<NormalizedCacheObject>,
+  | 'credentials'
+  | 'connectToDevTools'
+  | 'defaultOptions'
+  | 'assumeImmutableResults'
+  | 'fragmentMatcher'
+  | 'name'
+  | 'version'
+> & {
+  uri: string;
+  cacheOptions?: InMemoryCacheConfig;
+  links?: ApolloLink[];
+};
+
+export type ApolloClientConfig =
+  | PartialApolloClientOptions
+  | ((
+      initialState: NormalizedCacheObject,
+      headers?: IncomingHttpHeaders | null
+    ) => ApolloClient<NormalizedCacheObject>);
 
 // getServerSideProps types
 export type HydrationResults = {
