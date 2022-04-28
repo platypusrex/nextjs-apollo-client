@@ -34,7 +34,7 @@ const Home: NextPage<HomeProps> = () => {
         <h1 className={styles.title}>User List</h1>
 
         <Link href="/create-user">
-          <a className={styles.card}>Create user</a>
+          <a className={styles.cardLink}>Create User</a>
         </Link>
 
         <div className={styles.grid}>
@@ -43,7 +43,7 @@ const Home: NextPage<HomeProps> = () => {
               href={{ pathname: '/profile/[userId]', query: { userId: user.id } }}
               key={user.id}
             >
-              <a className={styles.card}>
+              <a className={styles.cardLink}>
                 <h2 style={{ margin: 0 }}>{user.firstName} {user.lastName}</h2>
               </a>
             </Link>

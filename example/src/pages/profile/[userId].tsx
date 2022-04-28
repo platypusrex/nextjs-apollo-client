@@ -4,20 +4,23 @@ import Image from 'next/image'
 import Link from 'next/link';
 import { ApolloQueryResult, useQuery } from '@apollo/client';
 import { getServerSideApolloProps } from '../../lib/apollo';
-import { USER_QUERY } from '../../gql';
-import { UserQuery, UserQueryVariables } from '../../types/generated';
+import { BOOKS_QUERY, USER_QUERY } from '../../gql';
+import { BooksQuery, UserQuery, UserQueryVariables } from '../../types/generated';
 import styles from '../../styles/Home.module.css'
 
 interface ProfilePageProps {
-  userId: number;
+  userId: string;
 }
 
 const ProfilePage: NextPage<ProfilePageProps> = ({ userId }) => {
-  const { data } = useQuery<UserQuery, UserQueryVariables>(USER_QUERY, {
+  const { data: userData } = useQuery<UserQuery, UserQueryVariables>(USER_QUERY, {
     variables: { id: userId }
   });
 
-  const user = data?.user;
+  const { data: booksData } = useQuery<BooksQuery>(BOOKS_QUERY);
+
+  const user = userData?.user;
+  const books = booksData?.books;
 
   return (
     <div className={styles.container}>
@@ -32,28 +35,39 @@ const ProfilePage: NextPage<ProfilePageProps> = ({ userId }) => {
           <a className={styles.card}>Back to Users</a>
         </Link>
 
-        {user && (
-          <div className={styles.grid}>
-            <div className={styles.card}>
-              <div className={styles.cardImageContainer}>
-                <Image src={user.img} objectFit="cover" layout="fill" />
-              </div>
-              <h2>{user.firstName} {user.lastName}</h2>
-              <div className={styles.cardUserInfo}>
-                <strong>Username</strong>
-                <p>{user.username}</p>
-              </div>
-              <div className={styles.cardUserInfo}>
-                <strong>Email</strong>
-                <p>{user.email}</p>
-              </div>
-              <div className={styles.cardUserInfo}>
-                <strong>Phone</strong>
-                <p>{user.phone}</p>
+        <div className={styles.pageGrid}>
+          {user && (
+            <div className={styles.grid}>
+              <div className={styles.card}>
+                <div className={styles.cardImageContainer}>
+                  <Image src={user.img} objectFit="cover" layout="fill" />
+                </div>
+                <h2>{user.firstName} {user.lastName}</h2>
+                <div className={styles.cardUserInfo}>
+                  <strong>Username</strong>
+                  <p>{user.username}</p>
+                </div>
+                <div className={styles.cardUserInfo}>
+                  <strong>Email</strong>
+                  <p>{user.email}</p>
+                </div>
+                <div className={styles.cardUserInfo}>
+                  <strong>Phone</strong>
+                  <p>{user.phone}</p>
+                </div>
               </div>
             </div>
+          )}
+          <div className={styles.bookGrid}>
+            {books?.map(book => (
+              <div className={styles.card}>
+                <h2>{book.title}</h2>
+                <p>{book.author}</p>
+                <p></p>
+              </div>
+            ))}
           </div>
-        )}
+        </div>
       </main>
 
       <footer className={styles.footer}>
@@ -73,14 +87,14 @@ const ProfilePage: NextPage<ProfilePageProps> = ({ userId }) => {
 }
 
 export const getServerSideProps = getServerSideApolloProps<ProfilePageProps>({
-  hydrateQueries: ['user'],
+  hydrateQueries: ['user', 'books'],
   onHydrationComplete: ({ results }) => {
     const result: ApolloQueryResult<UserQuery> | undefined = results?.find(result => result.data.user);
 
     if (!result?.data.user) {
       return {
         redirect: {
-          destination: '/?addUser=true',
+          destination: '/',
           permanent: false,
         }
       }
@@ -88,7 +102,7 @@ export const getServerSideProps = getServerSideApolloProps<ProfilePageProps>({
 
     return {
       props: {
-        userId: Number(result.data.user.id),
+        userId: result.data.user.id,
       }
     }
   }

@@ -80,8 +80,8 @@ const CreateUserPage: NextPage = () => {
           Add user
         </h1>
         <Link href="/">
-          <a className={styles.card}>
-            <p>Go Home for now</p>
+          <a className={styles.cardLink}>
+            Go Home
           </a>
         </Link>
 
