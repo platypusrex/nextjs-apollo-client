@@ -1,5 +1,6 @@
 #!/bin/sh
 . "$(dirname "$0")/_/husky.sh"
 
+yarn check:types
 yarn lint:fix
-npm test
+yarn test --changedSince master
