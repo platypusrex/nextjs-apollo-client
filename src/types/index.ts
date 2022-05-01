@@ -23,11 +23,12 @@ export interface InitializeApolloArgs {
 
 export type PartialApolloClientOptions = Pick<
   ApolloClientOptions<NormalizedCacheObject>,
+  | 'assumeImmutableResults'
   | 'credentials'
   | 'connectToDevTools'
   | 'defaultOptions'
-  | 'assumeImmutableResults'
   | 'fragmentMatcher'
+  | 'headers'
   | 'name'
   | 'version'
 > & {

@@ -21,7 +21,7 @@ import {
   QueryHydrationMap,
 } from './types';
 
-let APOLLO_CLIENT: ApolloClient<NormalizedCacheObject> | undefined;
+export let __APOLLO_CLIENT__: ApolloClient<NormalizedCacheObject> | undefined;
 
 export interface NextApolloClientOptions {
   client: ApolloClientConfig;
@@ -70,7 +70,7 @@ export class NextApolloClient<THydrationMap extends QueryHydrationMap> {
     }
   ): ApolloClient<NormalizedCacheObject> => {
     const _apolloClient =
-      APOLLO_CLIENT ?? this.createApolloClient(this._client, initialState ?? {}, headers);
+      __APOLLO_CLIENT__ ?? this.createApolloClient(this._client, initialState ?? {}, headers);
 
     if (initialState) {
       const existingCache = _apolloClient.extract();
@@ -85,7 +85,7 @@ export class NextApolloClient<THydrationMap extends QueryHydrationMap> {
       _apolloClient.cache.restore(data);
     }
     if (typeof window === 'undefined') return _apolloClient;
-    if (!APOLLO_CLIENT) APOLLO_CLIENT = _apolloClient;
+    if (!__APOLLO_CLIENT__) __APOLLO_CLIENT__ = _apolloClient;
 
     return _apolloClient;
   };
