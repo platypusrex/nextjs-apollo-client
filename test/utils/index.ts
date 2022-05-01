@@ -20,13 +20,10 @@ export const NOT_FOUND_QUERY = gql`
   }
 `;
 
-export const apolloClient = createMockClient(
-  { users: [] },
-  USERS_QUERY
-)
+export const apolloClient = createMockClient({ users: [] }, USERS_QUERY);
 
 export const context = {
-  req: { headers: {} }
+  req: { headers: {} },
 };
 
-export const hydrationMap = generateHydrationMap({ users: () => ({ query: USERS_QUERY }) })
+export const hydrationMap = generateHydrationMap({ users: () => ({ query: USERS_QUERY }) });

@@ -9,7 +9,7 @@ describe('useApolloState', () => {
   it('should', () => {
     const { useApolloClient } = new NextApolloClient<typeof hydrationMap>({
       hydrationMap,
-      client: () => apolloClient
+      client: () => apolloClient,
     });
 
     const { result } = renderHook(() => useApolloClient({}));
@@ -19,17 +19,19 @@ describe('useApolloState', () => {
   it('should do it', () => {
     const { useApolloClient } = new NextApolloClient<typeof hydrationMap>({
       hydrationMap,
-      client: () => apolloClient
+      client: () => apolloClient,
     });
 
-    const { result } = renderHook(() => useApolloClient({
-      [APOLLO_STATE_PROP_NAME]: {
-        ROOT_QUERY: { __typename: 'Query', users: [] }
-      }
-    }));
+    const { result } = renderHook(() =>
+      useApolloClient({
+        [APOLLO_STATE_PROP_NAME]: {
+          ROOT_QUERY: { __typename: 'Query', users: [] },
+        },
+      })
+    );
     expect(result.current).toBeInstanceOf(ApolloClient);
     expect(result.current.cache.extract()).toEqual({
-      ROOT_QUERY: { __typename: 'Query', users: [] }
+      ROOT_QUERY: { __typename: 'Query', users: [] },
     });
   });
 });
