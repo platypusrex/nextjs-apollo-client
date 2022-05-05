@@ -23,7 +23,7 @@ yarn add nextjs-apollo-client @apollo/client graphql
 The example below is the bare minimum requirements to get started. For more info about the API and usage continue
 reading. For more advanced usage check out the [example](https://github.com/platypusrex/nextjs-apollo-client/tree/master/example).
 
-1. Create a new instance of `NextApolloClient`
+1. **Create a new instance of `NextApolloClient`**
 ```ts
 // lib/apollo/index.ts
 export const { getServerSideApolloProps, useApolloClient } = new NextApolloClient({
@@ -31,7 +31,7 @@ export const { getServerSideApolloProps, useApolloClient } = new NextApolloClien
 });
 ```
 
-2. Add the Apollo provider to `_app.tsx` passing in the client
+2. **Add the Apollo provider to `_app.tsx` passing in the client**
 ```tsx
 // _app.tsx
 import type { AppProps } from 'next/app'
