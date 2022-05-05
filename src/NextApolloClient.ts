@@ -59,7 +59,7 @@ export class NextApolloClient<THydrationMap extends QueryHydrationMap> {
         headers: {
           ...headers,
           ...configHeaders,
-        }
+        },
       });
       return new ApolloClient({
         ssrMode: typeof window === 'undefined',
