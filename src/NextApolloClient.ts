@@ -50,9 +50,17 @@ export class NextApolloClient<THydrationMap extends QueryHydrationMap> {
         links,
         cacheOptions,
         credentials,
+        headers: configHeaders,
         ...rest
       } = apolloClient as PartialApolloClientOptions;
-      const httpLink = new HttpLink({ uri, headers, credentials });
+      const httpLink = new HttpLink({
+        uri,
+        credentials,
+        headers: {
+          ...headers,
+          ...configHeaders,
+        }
+      });
       return new ApolloClient({
         ssrMode: typeof window === 'undefined',
         connectToDevTools: typeof window !== 'undefined',
