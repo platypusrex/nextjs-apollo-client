@@ -1,8 +1,8 @@
-import type { NextPage } from 'next'
-import Head from 'next/head'
-import Image from 'next/image'
+import type { NextPage } from 'next';
+import Head from 'next/head';
+import Image from 'next/image';
 import Link from 'next/link';
-import styles from '../styles/Home.module.css'
+import styles from '../styles/Home.module.css';
 import { useQuery } from '@apollo/client';
 import { getServerSideApolloProps } from '../lib/apollo';
 import { generateUsers } from '../mocks';
@@ -81,16 +81,16 @@ export const getServerSideProps = getServerSideApolloProps<HomeProps>({
             username,
             email,
             phone,
-          }
-        }
+          },
+        },
       });
 
       return {
         redirect: {
           destination: '/',
           permanent: false,
-        }
-      }
+        },
+      };
     }
     return { props: {} };
   },
@@ -99,9 +99,9 @@ export const getServerSideProps = getServerSideApolloProps<HomeProps>({
     return {
       props: {
         users: result?.data.users ?? null,
-      }
-    }
-  }
-})
+      },
+    };
+  },
+});
 
-export default Home
+export default Home;
