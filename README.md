@@ -50,7 +50,7 @@ const App = ({ Component, pageProps }: AppProps) => {
 export default App
 ```
 
-3. Utilize the generated `getServerSideApolloProps` to start hydrating data for your pages
+3. **Utilize the generated `getServerSideApolloProps` to start hydrating data for your pages**
 ```tsx
 import type { NextPage } from 'next'
 import styles from '../styles/Home.module.css'
