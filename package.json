@@ -39,7 +39,8 @@
     "prepare": "tsdx build && husky install",
     "size": "size-limit",
     "analyze": "size-limit --why",
-    "check:types": "tsc --noEmit"
+    "check:types": "tsc --noEmit",
+    "release": "standard-version"
   },
   "size-limit": [
     {
