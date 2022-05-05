@@ -23,7 +23,7 @@ yarn add nextjs-apollo-client @apollo/client graphql
 The example below is the bare minimum requirements to get started. For more info about the API and usage continue
 reading. For more advanced usage check out the [example](https://github.com/platypusrex/nextjs-apollo-client/tree/master/example).
 
-1. Create a new instance of NextApolloClient
+1. Create a new instance of `NextApolloClient`
 ```ts
 // lib/apollo/index.ts
 export const { getServerSideApolloProps, useApolloClient } = new NextApolloClient({
@@ -50,7 +50,7 @@ const App = ({ Component, pageProps }: AppProps) => {
 export default App
 ```
 
-3. Utilize the generated `getServerSideApolloProps` to start hydrated data for your pages
+3. Utilize the generated `getServerSideApolloProps` to start hydrating data for your pages
 ```tsx
 import type { NextPage } from 'next'
 import styles from '../styles/Home.module.css'
@@ -134,7 +134,7 @@ The `nextjs-apollo-client` package includes a util to that you will need to use 
 To get autocompletion for your hydration map, you can provide the instance of `NextApolloClient` with the hydration map
 generic.
 
-1. Generate the hydration map
+1. **Generate the hydration map**
 
 The `generateHydrationMap` function accepts a key/value pair. The key you use will also be the string you reference to
 hydrate queries. The value is a function that provides access to the Next.js [Context](https://nextjs.org/docs/api-reference/data-fetching/get-server-side-props#context-parameter)
@@ -149,7 +149,7 @@ const hydrationMap = generateHydrationMap({
   users: (): QueryOptions<UsersQueryVariables, UsersQuery> => ({ query: USERS_QUERY }),
 });
 ```
-2. Pass the hydration map to the `NextApolloClient`
+2. **Pass the hydration map to the `NextApolloClient`**
 
 Now that you've generated the map, pass it into your `NextApolloClient` instance and provide the hydration map
 generic for autocompletion.
@@ -163,7 +163,7 @@ export const { getServerSideApolloProps, useApolloClient } = new NextApolloClien
 });
 ```
 
-3. Utilize your hydration map from `getServerSideApolloProps`
+3. **Utilize your hydration map from `getServerSideApolloProps`**
 
 Now you're ready to go! Now you can reference any query in your map via a string via autocompletion. 
 
@@ -203,7 +203,7 @@ export interface GetServerSideApolloPropsOptions<
 This argument is not required, but it is required if you want to actually hydrate data on the server. There are a couple 
 of different ways `hydrateQueries` can be used.
 
-1. Use with a hydration map
+1. **Use with a hydration map**
 
 If you have generated and provided `NextApolloClient` with a hydration map, you can simply reference your queries via map keys.
 
@@ -213,7 +213,7 @@ export const getServerSideProps = getServerSideApolloProps({
 });
 ```
 
-2. Use with `QueryOptions` array
+2. **Use with `QueryOptions` array**
 
 If your already familiar with Apollo client and have ever used `refetchQueries` as a side effect of mutation, this should
 feel familiar. Accepts a function that provides the Next.js [Context](https://nextjs.org/docs/api-reference/data-fetching/get-server-side-props#context-parameter)
@@ -242,7 +242,7 @@ The `getServerSideApolloProps` function also exposes a couple of callbacks that 
 of the function. The `onClientInitialized` callback does not assist with hydration but can still hydrate data. In fact,
 it's basically an escape hatch that supports a wide variety of use cases.
 
-* Mutation operation run on the server
+* **Mutation operation run on the server**
 
 Not a common use case, but if you need to do it you should do it here. A return is not required, but you can provide the 
 same [return value](https://nextjs.org/docs/api-reference/data-fetching/get-server-side-props#getserversideprops-return-values)
@@ -252,7 +252,7 @@ expected in any Next.js `getServerSideProps` function.
 export const getServerSideProps = getServerSideApolloProps<HomeProps>({
   hydrateQueries: ['users'],
   onClientInitialized: async (ctx, apolloClient) => {
-    const result await apolloClient.mutate({
+    const result = await apolloClient.mutate({
       mutation: MY_MUTATION,
       variables: {
         id: ctx.query.id
