@@ -1,12 +1,12 @@
-import type { NextPage } from 'next'
-import Head from 'next/head'
-import Image from 'next/image'
+import type { NextPage } from 'next';
+import Head from 'next/head';
+import Image from 'next/image';
 import Link from 'next/link';
 import { ApolloQueryResult, useQuery } from '@apollo/client';
 import { getServerSideApolloProps } from '../../lib/apollo';
 import { BOOKS_QUERY, USER_QUERY } from '../../gql';
 import { BooksQuery, UserQuery, UserQueryVariables } from '../../types/generated';
-import styles from '../../styles/Home.module.css'
+import styles from '../../styles/Home.module.css';
 
 interface ProfilePageProps {
   userId: string;
@@ -101,11 +101,9 @@ export const getServerSideProps = getServerSideApolloProps<ProfilePageProps>({
     }
 
     return {
-      props: {
-        userId: result.data.user.id,
-      }
-    }
+      props: { userId: result.data.user.id },
+    };
   }
-})
+});
 
-export default ProfilePage
+export default ProfilePage;
