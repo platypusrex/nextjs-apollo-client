@@ -53,7 +53,6 @@ export default App
 3. **Utilize the generated `getServerSideApolloProps` to start hydrating data for your pages**
 ```tsx
 import type { NextPage } from 'next'
-import styles from '../styles/Home.module.css'
 import { useQuery } from '@apollo/client';
 import { getServerSideApolloProps } from '../lib/apollo';
 import { USERS_QUERY } from '../gql';
@@ -62,7 +61,7 @@ const Home: NextPage = () => {
   const { data } = useQuery(USERS_QUERY);
 
   return (
-    <div className={styles.container}>
+    <div>
       ...rest
     </div>
   )
@@ -73,6 +72,40 @@ export const getServerSideProps = getServerSideApolloProps({
     { query: USER_QUERY, variables: { id: ctx.query.id } }
   ],
 });
+
+export default Home;
+```
+
+**Note:**
+The `nextjs-apollo-client` package works really well with [next-merge-props](https://github.com/platypusrex/next-merge-props).
+Especially if you have multiple abstractions for Next.js server side data fetching functions.
+
+```tsx
+import type { NextPage } from 'next'
+import { useQuery } from '@apollo/client';
+import { mergeProps } from 'next-merge-props';
+import { getServerSideAuthProps } from '../lib/auth';
+import { getServerSideApolloProps } from '../lib/apollo';
+import { USERS_QUERY } from '../gql';
+
+const Home: NextPage = () => {
+  const { data } = useQuery(USERS_QUERY);
+
+  return (
+    <div>
+      ...rest
+    </div>
+  )
+}
+
+export const getServerSideProps = mergeProps(
+  getServerSideAuthProps,
+  getServerSideApolloProps({
+    hydrateQueries: (ctx) => [
+      { query: USER_QUERY, variables: { id: ctx.query.id } }
+    ],
+  })
+);
 
 export default Home;
 ```
@@ -249,7 +282,7 @@ same [return value](https://nextjs.org/docs/api-reference/data-fetching/get-serv
 expected in any Next.js `getServerSideProps` function.
 
 ```ts
-export const getServerSideProps = getServerSideApolloProps<HomeProps>({
+export const getServerSideProps = getServerSideApolloProps<PageProps>({
   hydrateQueries: ['users'],
   onClientInitialized: async (ctx, apolloClient) => {
     const result = await apolloClient.mutate({
@@ -279,7 +312,7 @@ interface PageProps {
   userId?: string; 
 }
 
-export const getServerSideProps = getServerSideApolloProps<ProfilePageProps>({
+export const getServerSideProps = getServerSideApolloProps<PageProps>({
   hydrateQueries: ['user'],
   onHydrationComplete: ({ results, errors }) => {
     const result: ApolloQueryResult<UserQuery> | undefined = results?.find(result => result.data.user);
