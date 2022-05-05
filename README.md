@@ -21,7 +21,7 @@ yarn add nextjs-apollo-client @apollo/client graphql
 
 ### Setup
 The example below is the bare minimum requirements to get started. For more info about the API and usage continue
-reading. For more advanced usage check out the [example](https://github.com/platypusrex/nextjs-apollo-client/tree/master/example);
+reading. For more advanced usage check out the [example](https://github.com/platypusrex/nextjs-apollo-client/tree/master/example).
 
 1. Create a new instance of NextApolloClient
 ```ts
