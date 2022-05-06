@@ -6,7 +6,7 @@
 
 # nextjs-apollo-client
 
-A package that supports integration of Apollo client in a Next.js application. Promotes easy setup and exposes a simple
+Simple integration of Apollo client in a Next.js application. Easy setup with a simple
 but powerful API that can adapt to any use case.
 
 ### Installation
