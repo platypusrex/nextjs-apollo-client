@@ -14,12 +14,12 @@
   ],
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/platypusrex/nextjs-apollo.git"
+    "url": "git+https://github.com/platypusrex/nextjs-apollo-client.git"
   },
   "bugs": {
-    "url": "https://github.com/platypusrex/nextjs-apollo/issues"
+    "url": "https://github.com/platypusrex/nextjs-apollo-client/issues"
   },
-  "homepage": "https://github.com/platypusrex/nextjs-apollo/#readme",
+  "homepage": "https://github.com/platypusrex/nextjs-apollo-client/#readme",
   "main": "dist/index.js",
   "typings": "dist/index.d.ts",
   "module": "dist/test.esm.js",
