@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.2.1](https://github.com/platypusrex/nextjs-apollo-client/compare/@release/0.2.0...@release/0.2.1) (2022-05-08)
+
+
+### Bug Fixes
+
+* incorrect repo links referenced in package.json ([9a01a01](https://github.com/platypusrex/nextjs-apollo-client/commit/9a01a01346353f018450caef79e91a1a3e28592c))
+
 ## 0.2.0 (2022-05-05)
 
 
