@@ -5,6 +5,10 @@
 
 
 # nextjs-apollo-client
+[![npm Package](https://img.shields.io/npm/v/nextjs-apollo-client.svg)](https://www.npmjs.org/package/nextjs-apollo-client)
+[![License](https://img.shields.io/npm/l/nextjs-apollo-client.svg)](https://github.com/platypusrex/nextjs-apollo-client/blob/master/LICENSE)
+[![Coverage Status](https://coveralls.io/repos/github/platypusrex/nextjs-apollo-client/badge.svg?branch=master)](https://coveralls.io/github/platypusrex/nextjs-apollo-client?branch=master)
+![CI](https://github.com/platypusrex/nextjs-apollo-client/workflows/CI/badge.svg)
 
 Simple integration of Apollo client in a Next.js application. Easy setup with a simple
 but powerful API that can adapt to any use case.
