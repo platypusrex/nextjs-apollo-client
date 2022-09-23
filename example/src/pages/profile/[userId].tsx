@@ -2,7 +2,7 @@ import type { NextPage } from 'next';
 import Head from 'next/head';
 import Image from 'next/image';
 import Link from 'next/link';
-import { ApolloQueryResult, useQuery } from '@apollo/client';
+import { useQuery } from '@apollo/client';
 import { getServerSideApolloProps } from '../../lib/apollo';
 import { BOOKS_QUERY, USER_QUERY } from '../../gql';
 import { BooksQuery, UserQuery, UserQueryVariables } from '../../types/generated';
@@ -89,9 +89,9 @@ const ProfilePage: NextPage<ProfilePageProps> = ({ userId }) => {
 export const getServerSideProps = getServerSideApolloProps<ProfilePageProps>({
   hydrateQueries: ['user', 'books'],
   onHydrationComplete: ({ results }) => {
-    const result: ApolloQueryResult<UserQuery> | undefined = results?.find(result => result.data.user);
+    const user = results?.user?.data.user;
 
-    if (!result?.data.user) {
+    if (!user) {
       return {
         redirect: {
           destination: '/',
@@ -101,7 +101,7 @@ export const getServerSideProps = getServerSideApolloProps<ProfilePageProps>({
     }
 
     return {
-      props: { userId: result.data.user.id },
+      props: { userId: user.id },
     };
   }
 });

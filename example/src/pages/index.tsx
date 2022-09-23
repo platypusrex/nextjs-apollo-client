@@ -95,11 +95,9 @@ export const getServerSideProps = getServerSideApolloProps<HomeProps>({
     return { props: {} };
   },
   onHydrationComplete: ({ results }) => {
-    const result = results?.find(result => result.data.users);
+    const users = results?.users?.data.users ?? null;
     return {
-      props: {
-        users: result?.data.users ?? null,
-      },
+      props: { users },
     };
   },
 });
