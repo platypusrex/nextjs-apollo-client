@@ -30,9 +30,10 @@ const hydrationMap = generateHydrationMap({
  *    ssrMode: typeof window === 'undefined',
  *    cache: new InMemoryCache().restore(initialState),
  *    link: new HttpLink({
- *    uri: 'http://localhost:3000/api/graphql',
- *    headers,
- *  }),
+ *      uri: 'http://localhost:3000/api/graphql',
+ *      headers,
+ *    }),
+ *  })
  */
 
 
