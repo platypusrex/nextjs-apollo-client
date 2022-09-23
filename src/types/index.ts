@@ -21,33 +21,26 @@ export interface InitializeApolloArgs {
   initialState?: InitialState | null;
 }
 
-export type PartialApolloClientOptions = Pick<
+export type PartialApolloClientOptions = Omit<
   ApolloClientOptions<NormalizedCacheObject>,
-  | 'assumeImmutableResults'
-  | 'credentials'
-  | 'connectToDevTools'
-  | 'defaultOptions'
-  | 'fragmentMatcher'
-  | 'headers'
-  | 'name'
-  | 'version'
+  'link' | 'cache' | 'ssrMode'
 > & {
   uri: string;
   cacheOptions?: InMemoryCacheConfig;
   links?: ApolloLink[];
 };
 
-export type ApolloClientConfig =
-  | PartialApolloClientOptions
-  | ((
-      initialState: NormalizedCacheObject,
-      headers?: IncomingHttpHeaders | null
-    ) => ApolloClient<NormalizedCacheObject>);
+type ApolloClientFn = (
+  initialState: NormalizedCacheObject,
+  headers?: IncomingHttpHeaders | null
+) => ApolloClient<NormalizedCacheObject>;
+
+export type ApolloClientConfig = PartialApolloClientOptions | ApolloClientFn;
 
 // getServerSideProps types
-export type HydrationResults = {
+export type HydrationResponse<THydrationMap extends QueryHydrationMap = any> = {
   errors?: ApolloError[];
-  results?: ApolloQueryResult<any>[];
+  results?: THydrationMap extends any ? AnyHydrationResults : HydrationResults<THydrationMap>;
 };
 
 export type HydrateQueries<THydrationMap> =
@@ -61,18 +54,19 @@ export type ServerSidePropsResult<TProps> =
   | Promise<GetServerSidePropsResult<TProps>>
   | GetServerSidePropsResult<TProps>;
 
-export type ClientInitFn<TProps> = (
-  ctx: GetServerSidePropsContext,
-  apolloClient: ApolloClient<NormalizedCacheObject>
-) => ServerSidePropsResult<TProps>;
-
 export interface GetServerSideApolloPropsOptions<
   TProps = Record<string, any> & GetServerSideApolloProps,
-  THydrationMap = never
+  THydrationMapKeys = any,
+  THydrationMap extends QueryHydrationMap = any
 > {
-  hydrateQueries?: HydrateQueries<THydrationMap>;
-  onClientInitialized?: ClientInitFn<TProps>;
-  onHydrationComplete?: (results: HydrationResults) => ServerSidePropsResult<TProps>;
+  hydrateQueries?: HydrateQueries<THydrationMapKeys>;
+  onClientInitialized?: (
+    ctx: GetServerSidePropsContext,
+    apolloClient: ApolloClient<NormalizedCacheObject>
+  ) => ServerSidePropsResult<TProps>;
+  onHydrationComplete?: (
+    results: HydrationResponse<THydrationMap>
+  ) => ServerSidePropsResult<TProps>;
 }
 
 export interface GetServerSideApolloProps {
@@ -81,3 +75,13 @@ export interface GetServerSideApolloProps {
 
 // query hydration types
 export type QueryHydrationMap = Record<string, (ctx: GetServerSidePropsContext) => QueryOptions>;
+
+export type HydrationResults<T extends QueryHydrationMap> = {
+  [K in keyof T]?: ApolloQueryResult<HydrationQueryOptions<ReturnType<T[K]>>>;
+};
+
+export type AnyHydrationResults<T = { [key: string]: any }> = {
+  [K in keyof T]?: ApolloQueryResult<T>;
+};
+
+export type HydrationQueryOptions<T> = T extends QueryOptions<any, infer Q> ? Q : never;

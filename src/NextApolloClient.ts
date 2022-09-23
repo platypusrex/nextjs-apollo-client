@@ -15,7 +15,7 @@ import {
   ApolloClientConfig,
   GetServerSideApolloProps,
   GetServerSideApolloPropsOptions,
-  HydrationResults,
+  HydrationResponse,
   InitializeApolloArgs,
   PartialApolloClientOptions,
   QueryHydrationMap,
@@ -122,7 +122,8 @@ export class NextApolloClient<THydrationMap extends QueryHydrationMap> {
     onHydrationComplete,
   }: GetServerSideApolloPropsOptions<
     TProps,
-    (keyof THydrationMap)[]
+    (keyof THydrationMap)[],
+    THydrationMap
   > = {}): GetServerSideProps => async (
     ctx: GetServerSidePropsContext
   ): Promise<GetServerSidePropsResult<GetServerSideApolloProps>> => {
@@ -151,15 +152,23 @@ export class NextApolloClient<THydrationMap extends QueryHydrationMap> {
         })
       );
 
-      const hydrationResults = queryResults.reduce<HydrationResults>((acc, curr) => {
-        if (curr.status === 'rejected') {
-          acc['errors'] = [...(acc['errors'] ?? []), curr.reason];
-        }
-        if (curr.status === 'fulfilled') {
-          acc['results'] = [...(acc['results'] ?? []), curr.value];
-        }
-        return acc;
-      }, {});
+      const hydrationResults = queryResults.reduce<HydrationResponse<THydrationMap>>(
+        (acc, curr) => {
+          if (curr.status === 'rejected') {
+            acc['errors'] = [...(acc['errors'] ?? []), curr.reason];
+          }
+          if (curr.status === 'fulfilled') {
+            const currentKey = Object.keys(curr.value.data)[0];
+            // @ts-ignore
+            acc['results'] = {
+              ...acc['results'],
+              [currentKey]: curr.value,
+            };
+          }
+          return acc;
+        },
+        {}
+      );
 
       if (onHydrationComplete) {
         // @ts-ignore

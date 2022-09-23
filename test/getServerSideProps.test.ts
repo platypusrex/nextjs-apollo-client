@@ -117,7 +117,7 @@ describe('getServerSideApolloProps', () => {
       const onHydrationComplete: GetServerSideApolloPropsOptions<
         any
       >['onHydrationComplete'] = jest.fn(({ results }) => {
-        const users = results?.find(result => result.data.users);
+        const users = results?.users?.data?.users;
         return { props: { users } };
       });
       const result = await getServerSideApolloProps({
@@ -127,14 +127,14 @@ describe('getServerSideApolloProps', () => {
 
       expect(spy).toHaveBeenCalledWith({ query: USERS_QUERY });
       expect(onHydrationComplete).toHaveBeenCalledWith({
-        results: [{ data: { users: [] }, loading: false, networkStatus: 7 }],
+        results: { users: { data: { users: [] }, loading: false, networkStatus: 7 } },
       });
       expect(result).toEqual({
         props: {
           [APOLLO_STATE_PROP_NAME]: {
             ROOT_QUERY: { __typename: 'Query', users: [] },
           },
-          users: { data: { users: [] }, loading: false, networkStatus: 7 },
+          users: [],
         },
       });
     });
@@ -148,7 +148,7 @@ describe('getServerSideApolloProps', () => {
       const onHydrationComplete: GetServerSideApolloPropsOptions<
         any
       >['onHydrationComplete'] = jest.fn(({ results }) => {
-        const users = results?.find(result => result.data.books);
+        const users = results?.books?.data.books;
         return !users ? { redirect: { destination: '/', permanent: false } } : { props: { users } };
       });
       const result = await getServerSideApolloProps({
@@ -174,7 +174,7 @@ describe('getServerSideApolloProps', () => {
       const onHydrationComplete: GetServerSideApolloPropsOptions<
         any
       >['onHydrationComplete'] = jest.fn(({ results }) => {
-        const users = results?.find(result => result.data.books);
+        const users = results?.books?.data.books;
         return !users ? { notFound: true } : { props: { users } };
       });
       const result = await getServerSideApolloProps({
