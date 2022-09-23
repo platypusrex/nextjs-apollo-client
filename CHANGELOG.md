@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.3.0-alpha.0](https://github.com/platypusrex/nextjs-apollo-client/compare/@release/0.2.2...@release/0.3.0-alpha.0) (2022-09-23)
+
+
+### Bug Fixes
+
+* comment ([ab12caf](https://github.com/platypusrex/nextjs-apollo-client/commit/ab12cafce7ddeacd21314b70a221848ba6ae0a44))
+* unit tests and typing issues when no hydration map typing is provided ([1c29921](https://github.com/platypusrex/nextjs-apollo-client/commit/1c2992159cc60d707738776bbace0a547bf43beb))
+
 ### [0.2.2](https://github.com/platypusrex/nextjs-apollo-client/compare/@release/0.2.1...@release/0.2.2) (2022-05-18)
 
 ### [0.2.1](https://github.com/platypusrex/nextjs-apollo-client/compare/@release/0.2.0...@release/0.2.1) (2022-05-08)
