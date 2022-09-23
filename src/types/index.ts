@@ -82,6 +82,6 @@ export type HydrationResults<T extends QueryHydrationMap> = {
 
 export type AnyHydrationResults<T = { [key: string]: any }> = {
   [K in keyof T]?: ApolloQueryResult<T>;
-}
+};
 
 export type GetInsideQuery<X> = X extends QueryOptions<any, infer Q> ? Q : never;
