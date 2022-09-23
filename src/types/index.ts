@@ -77,11 +77,11 @@ export interface GetServerSideApolloProps {
 export type QueryHydrationMap = Record<string, (ctx: GetServerSidePropsContext) => QueryOptions>;
 
 export type HydrationResults<T extends QueryHydrationMap> = {
-  [K in keyof T]?: ApolloQueryResult<GetInsideQuery<ReturnType<T[K]>>>;
+  [K in keyof T]?: ApolloQueryResult<HydrationQueryOptions<ReturnType<T[K]>>>;
 };
 
 export type AnyHydrationResults<T = { [key: string]: any }> = {
   [K in keyof T]?: ApolloQueryResult<T>;
 };
 
-export type GetInsideQuery<X> = X extends QueryOptions<any, infer Q> ? Q : never;
+export type HydrationQueryOptions<T> = T extends QueryOptions<any, infer Q> ? Q : never;
