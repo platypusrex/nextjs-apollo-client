@@ -1,6 +1,6 @@
 {
   "name": "nextjs-apollo-client",
-  "version": "0.3.0-alpha.0",
+  "version": "0.3.0-alpha.1",
   "author": "Frank Cooke",
   "description": "Easily setup Next.js getServerSideProps/getStaticProps for Apollo GraphQL",
   "keywords": [
