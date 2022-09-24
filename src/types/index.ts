@@ -38,26 +38,31 @@ type ApolloClientFn = (
 export type ApolloClientConfig = PartialApolloClientOptions | ApolloClientFn;
 
 // getServerSideProps types
-export type HydrationResponse<THydrationMap extends QueryHydrationMap = any> = {
+export type HydrationResponse<THydrationMap extends QueryHydrationMap> = HydrationCompleteResults<
+  THydrationMap
+> & {
   errors?: ApolloError[];
-  results?: THydrationMap extends any ? AnyHydrationResults : HydrationResults<THydrationMap>;
 };
+
+export type HydrationCompleteResults<
+  THydrationMap extends QueryHydrationMap
+> = THydrationMap extends never ? AnyHydrationResults : HydrationResults<THydrationMap>;
 
 export type HydrateQueries<THydrationMap> =
   | THydrationMap
   | PureQueryOptions[]
   | ((ctx: GetServerSidePropsContext) => PureQueryOptions[]);
 
-export type ServerSidePropsResult<TProps> =
+export type ServerSidePropsResult<TProps = Record<string, any>> =
   | void
   | Promise<void>
   | Promise<GetServerSidePropsResult<TProps>>
   | GetServerSidePropsResult<TProps>;
 
 export interface GetServerSideApolloPropsOptions<
-  TProps = Record<string, any> & GetServerSideApolloProps,
+  THydrationMap extends QueryHydrationMap,
   THydrationMapKeys = any,
-  THydrationMap extends QueryHydrationMap = any
+  TProps = Record<string, any>
 > {
   hydrateQueries?: HydrateQueries<THydrationMapKeys>;
   onClientInitialized?: (
@@ -77,11 +82,19 @@ export interface GetServerSideApolloProps {
 export type QueryHydrationMap = Record<string, (ctx: GetServerSidePropsContext) => QueryOptions>;
 
 export type HydrationResults<T extends QueryHydrationMap> = {
-  [K in keyof T]?: ApolloQueryResult<HydrationQueryOptions<ReturnType<T[K]>>>;
+  [K in keyof T]?: ApolloQueryResult<
+    ReturnType<T[K]> extends QueryOptions ? HydrationQueryOptions<ReturnType<T[K]>> : any
+  >;
 };
 
 export type AnyHydrationResults<T = { [key: string]: any }> = {
   [K in keyof T]?: ApolloQueryResult<T>;
 };
 
-export type HydrationQueryOptions<T> = T extends QueryOptions<any, infer Q> ? Q : never;
+export type HydrationQueryOptions<T> = T extends QueryOptions<any, infer Q>
+  ? StrictlyUnknown<Q> extends true
+    ? any
+    : Q
+  : never;
+
+type StrictlyUnknown<T> = unknown extends T ? true : false;

@@ -1,4 +1,4 @@
-import type { NextPage } from 'next';
+import type { InferGetServerSidePropsType, NextPage } from 'next';
 import Head from 'next/head';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -8,11 +8,7 @@ import { BOOKS_QUERY, USER_QUERY } from '../../gql';
 import { BooksQuery, UserQuery, UserQueryVariables } from '../../types/generated';
 import styles from '../../styles/Home.module.css';
 
-interface ProfilePageProps {
-  userId: string;
-}
-
-const ProfilePage: NextPage<ProfilePageProps> = ({ userId }) => {
+const ProfilePage: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = ({ userId }) => {
   const { data: userData } = useQuery<UserQuery, UserQueryVariables>(USER_QUERY, {
     variables: { id: userId }
   });
@@ -86,10 +82,10 @@ const ProfilePage: NextPage<ProfilePageProps> = ({ userId }) => {
   )
 }
 
-export const getServerSideProps = getServerSideApolloProps<ProfilePageProps>({
+export const getServerSideProps = getServerSideApolloProps<{ userId: string }>({
   hydrateQueries: ['user', 'books'],
-  onHydrationComplete: ({ results }) => {
-    const user = results?.user?.data.user;
+  onHydrationComplete: ({ user: userResult }) => {
+    const user = userResult?.data.user;
 
     if (!user) {
       return {

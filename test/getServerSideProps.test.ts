@@ -114,11 +114,10 @@ describe('getServerSideApolloProps', () => {
         client: () => apolloClient,
       });
 
-      const onHydrationComplete: GetServerSideApolloPropsOptions<
-        any
-      >['onHydrationComplete'] = jest.fn(({ results }) => {
-        const users = results?.users?.data?.users;
-        return { props: { users } };
+      const onHydrationComplete: GetServerSideApolloPropsOptions<{
+        users: any;
+      }>['onHydrationComplete'] = jest.fn(({ users }) => {
+        return { props: { users: users?.data.users } };
       });
       const result = await getServerSideApolloProps({
         hydrateQueries: [{ query: USERS_QUERY }],
@@ -127,7 +126,7 @@ describe('getServerSideApolloProps', () => {
 
       expect(spy).toHaveBeenCalledWith({ query: USERS_QUERY });
       expect(onHydrationComplete).toHaveBeenCalledWith({
-        results: { users: { data: { users: [] }, loading: false, networkStatus: 7 } },
+        users: { data: { users: [] }, loading: false, networkStatus: 7 },
       });
       expect(result).toEqual({
         props: {
@@ -147,8 +146,8 @@ describe('getServerSideApolloProps', () => {
 
       const onHydrationComplete: GetServerSideApolloPropsOptions<
         any
-      >['onHydrationComplete'] = jest.fn(({ results }) => {
-        const users = results?.books?.data.books;
+      >['onHydrationComplete'] = jest.fn(({ books }) => {
+        const users = books?.data.books;
         return !users ? { redirect: { destination: '/', permanent: false } } : { props: { users } };
       });
       const result = await getServerSideApolloProps({
@@ -173,8 +172,8 @@ describe('getServerSideApolloProps', () => {
 
       const onHydrationComplete: GetServerSideApolloPropsOptions<
         any
-      >['onHydrationComplete'] = jest.fn(({ results }) => {
-        const users = results?.books?.data.books;
+      >['onHydrationComplete'] = jest.fn(({ books }) => {
+        const users = books?.data.books;
         return !users ? { notFound: true } : { props: { users } };
       });
       const result = await getServerSideApolloProps({
