@@ -1,4 +1,4 @@
-import { gql } from '@apollo/client';
+import { gql, OperationVariables, QueryOptions } from '@apollo/client';
 import { createMockClient } from '@apollo/client/testing';
 import { generateHydrationMap } from '../../src';
 
@@ -26,4 +26,20 @@ export const context = {
   req: { headers: {} },
 };
 
-export const hydrationMap = generateHydrationMap({ users: () => ({ query: USERS_QUERY }) });
+export type UsersQuery = {
+  __typename?: 'Query';
+  users: Array<{
+    __typename?: 'User';
+    id: string;
+    firstName: string;
+    lastName: string;
+    username: string;
+    email: string;
+    phone?: string | null;
+    img: string;
+  }>;
+};
+
+export const hydrationMap = generateHydrationMap({
+  users: (): QueryOptions<OperationVariables, UsersQuery> => ({ query: USERS_QUERY }),
+});

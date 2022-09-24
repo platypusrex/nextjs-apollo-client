@@ -1,4 +1,4 @@
-import type { NextPage } from 'next';
+import type { InferGetServerSidePropsType, NextPage } from 'next';
 import Head from 'next/head';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -15,11 +15,8 @@ import {
   UsersQuery
 } from '../types/generated';
 
-interface HomeProps {
-  users?: UserFragment[] | null;
-}
-
-const Home: NextPage<HomeProps> = () => {
+const Home: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = ({ users }) => {
+  console.log('users from server side hydration', users);
   const { data } = useQuery<UsersQuery, UserQueryVariables>(USERS_QUERY);
 
   return (
@@ -67,7 +64,7 @@ const Home: NextPage<HomeProps> = () => {
   )
 }
 
-export const getServerSideProps = getServerSideApolloProps<HomeProps>({
+export const getServerSideProps = getServerSideApolloProps<{ users?: UserFragment[] | null }>({
   hydrateQueries: ['users'],
   onClientInitialized: async (ctx, apolloClient) => {
     if (ctx.query.addUser) {
@@ -94,10 +91,11 @@ export const getServerSideProps = getServerSideApolloProps<HomeProps>({
     }
     return { props: {} };
   },
-  onHydrationComplete: ({ results }) => {
-    const users = results?.users?.data.users ?? null;
+  onHydrationComplete: ({ users }) => {
     return {
-      props: { users },
+      props: {
+        users: users?.data.users ?? null
+      },
     };
   },
 });

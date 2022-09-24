@@ -15,6 +15,7 @@ import {
   ApolloClientConfig,
   GetServerSideApolloProps,
   GetServerSideApolloPropsOptions,
+  HydrationCompleteResults,
   HydrationResponse,
   InitializeApolloArgs,
   PartialApolloClientOptions,
@@ -121,12 +122,12 @@ export class NextApolloClient<THydrationMap extends QueryHydrationMap> {
     onClientInitialized,
     onHydrationComplete,
   }: GetServerSideApolloPropsOptions<
-    TProps,
+    THydrationMap,
     (keyof THydrationMap)[],
-    THydrationMap
-  > = {}): GetServerSideProps => async (
+    TProps
+  > = {}): GetServerSideProps<GetServerSideApolloProps & TProps> => async (
     ctx: GetServerSidePropsContext
-  ): Promise<GetServerSidePropsResult<GetServerSideApolloProps>> => {
+  ): Promise<GetServerSidePropsResult<GetServerSideApolloProps & TProps>> => {
     const apolloClient = this.initializeApollo({ headers: ctx.req.headers });
     let baseProps = {};
 
@@ -159,15 +160,11 @@ export class NextApolloClient<THydrationMap extends QueryHydrationMap> {
           }
           if (curr.status === 'fulfilled') {
             const currentKey = Object.keys(curr.value.data)[0];
-            // @ts-ignore
-            acc['results'] = {
-              ...acc['results'],
-              [currentKey]: curr.value,
-            };
+            acc = { ...acc, [currentKey]: curr.value };
           }
           return acc;
         },
-        {}
+        {} as HydrationCompleteResults<THydrationMap>
       );
 
       if (onHydrationComplete) {
