@@ -29,7 +29,7 @@ export interface NextApolloClientOptions {
   hydrationMap?: QueryHydrationMap;
 }
 
-export class NextApolloClient<THydrationMap extends QueryHydrationMap = any> {
+export class NextApolloClient<THydrationMap extends QueryHydrationMap> {
   private readonly _client!: NextApolloClientOptions['client'];
   private readonly _hydrationMap?: NextApolloClientOptions['hydrationMap'];
 
