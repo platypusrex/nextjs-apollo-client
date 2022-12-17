@@ -72,7 +72,7 @@ export class NextApolloClient<THydrationMap extends QueryHydrationMap> {
     }
   };
 
-  private initializeApollo = (
+  public initializeApollo = (
     { headers, initialState }: InitializeApolloArgs = {
       headers: null,
       initialState: null,
