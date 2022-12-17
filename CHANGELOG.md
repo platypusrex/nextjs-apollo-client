@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.3.0](https://github.com/platypusrex/nextjs-apollo-client/compare/@release/0.3.0-alpha.1...@release/0.3.0) (2022-12-17)
+
+
+### Features
+
+* makes initializeApollo method public ([1d67c58](https://github.com/platypusrex/nextjs-apollo-client/commit/1d67c58371194d757f0b53342fb3e58f65b6d581))
+
 ## [0.3.0-alpha.1](https://github.com/platypusrex/nextjs-apollo-client/compare/@release/0.3.0-alpha.0...@release/0.3.0-alpha.1) (2022-09-24)
 
 
