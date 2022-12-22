@@ -218,11 +218,11 @@ that should be used to hydrate any Next.js page component with data.
 #### Args
 Below is a table that describes the accepted arguments.
 
-| **Property**        | **Type**                                                                                                                                       | **Required**                                                  |
-|---------------------|------------------------------------------------------------------------------------------------------------------------------------------------|---------------------------------------------------------------|
-| hydrateQueries      | [HydrateQueries<THydrationMap>](https://github.com/platypusrex/nextjs-apollo-client/blob/e7bff6af8b0c90aea015db3ef3ebd99c6379493d/src/types/index.ts#L73) | no (if not provided all queries will be made on the client)   |
-| onClientInitialized | [ClientInitFn<TProps>](https://github.com/platypusrex/nextjs-apollo-client/blob/e7bff6af8b0c90aea015db3ef3ebd99c6379493d/src/types/index.ts#L74)  | no                                                         |
-| onHydrationComplete | [(results: HydrationResponse<THydrationMap>) => ServerSidePropsResult<TProps>](https://github.com/platypusrex/nextjs-apollo-client/blob/ad5af151c15f32205c5cb71e3d2cbcbfa6c6361c/src/types/index.ts#L72)  | no                 |
+| **Property**        | **Type**                                                                                                                                                                                                 | **Required**                                                |
+|---------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|-------------------------------------------------------------|
+| hydrateQueries      | [HydrateQueries<THydrationMap>](https://github.com/platypusrex/nextjs-apollo-client/blob/e7bff6af8b0c90aea015db3ef3ebd99c6379493d/src/types/index.ts#L73)                                                | no (if not provided all queries will be made on the client) |
+| onClientInitialized | [ClientInitFn<TProps>](https://github.com/platypusrex/nextjs-apollo-client/blob/e7bff6af8b0c90aea015db3ef3ebd99c6379493d/src/types/index.ts#L74)                                                         | no                                                          |
+| onHydrationComplete | [(results: HydrationResponse<THydrationMap>) => ServerSidePropsResult<TProps>](https://github.com/platypusrex/nextjs-apollo-client/blob/ad5af151c15f32205c5cb71e3d2cbcbfa6c6361c/src/types/index.ts#L72) | no                                                          |
 
 ```ts
 export interface GetServerSideApolloPropsOptions<
