@@ -222,16 +222,22 @@ Below is a table that describes the accepted arguments.
 |---------------------|------------------------------------------------------------------------------------------------------------------------------------------------|---------------------------------------------------------------|
 | hydrateQueries      | [HydrateQueries<THydrationMap>](https://github.com/platypusrex/nextjs-apollo-client/blob/e7bff6af8b0c90aea015db3ef3ebd99c6379493d/src/types/index.ts#L73) | no (if not provided all queries will be made on the client)   |
 | onClientInitialized | [ClientInitFn<TProps>](https://github.com/platypusrex/nextjs-apollo-client/blob/e7bff6af8b0c90aea015db3ef3ebd99c6379493d/src/types/index.ts#L74)  | no                                                         |
-| onHydrationComplete | [(results: HydrationResults) => ServerSidePropsResult<TProps>](https://github.com/platypusrex/nextjs-apollo-client/blob/e7bff6af8b0c90aea015db3ef3ebd99c6379493d/src/types/index.ts#L75)  | no                 |
+| onHydrationComplete | [(results: HydrationResponse<THydrationMap>) => ServerSidePropsResult<TProps>](https://github.com/platypusrex/nextjs-apollo-client/blob/ad5af151c15f32205c5cb71e3d2cbcbfa6c6361c/src/types/index.ts#L72)  | no                 |
 
 ```ts
 export interface GetServerSideApolloPropsOptions<
-  TProps = Record<string, any> & GetServerSideApolloProps,
-  THydrationMap = never
+  THydrationMap extends QueryHydrationMap,
+  THydrationMapKeys = any,
+  TProps = Record<string, any>
 > {
-  hydrateQueries?: HydrateQueries<THydrationMap>;
-  onClientInitialized?: ClientInitFn<TProps>;
-  onHydrationComplete?: (results: HydrationResults) => ServerSidePropsResult<TProps>;
+  hydrateQueries?: HydrateQueries<THydrationMapKeys>;
+  onClientInitialized?: (
+    ctx: GetServerSidePropsContext,
+    apolloClient: ApolloClient<NormalizedCacheObject>
+  ) => ServerSidePropsResult<TProps>;
+  onHydrationComplete?: (
+    results: HydrationResponse<THydrationMap>
+  ) => ServerSidePropsResult<TProps>;
 }
 ```
 
