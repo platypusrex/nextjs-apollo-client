@@ -305,7 +305,9 @@ export const getServerSideProps = getServerSideApolloProps<PageProps>({
 
 The second and last callback option is `onHydrationComplete`. This is used in conjunction with `hydrateQueries` and should
 be more commonly used than `onClientInitialized`. The callback is run after any queries from `hydrateQueries` are run and
-returns a list of the results and/or errors from each query.
+returns either the result of any hydration operation or errors from each query. Results for hydrated operations are mapped
+to there operation name. If you have provided your instance of `NextApolloClient` the generic (`typeof hydrationMap`), you
+will get proper auto-completion for any of the operation names.
 
 A return is again not required, but you can provide the
 same [return value](https://nextjs.org/docs/api-reference/data-fetching/get-server-side-props#getserversideprops-return-values)
@@ -318,14 +320,14 @@ interface PageProps {
 
 export const getServerSideProps = getServerSideApolloProps<PageProps>({
   hydrateQueries: ['user'],
-  onHydrationComplete: ({ results, errors }) => {
-    const result: ApolloQueryResult<UserQuery> | undefined = results?.find(result => result.data.user);
+  onHydrationComplete: ({ user, errors }) => {
+    const currentUser = user?.data.user;
     
     if (errors.length) {
       return { notFound: true };
     }
 
-    if (!result?.data.user) {
+    if (!currentUser) {
       return {
         redirect: {
           destination: '/',
@@ -335,7 +337,7 @@ export const getServerSideProps = getServerSideApolloProps<PageProps>({
     }
 
     return {
-      props: { userId: result.data.user.id },
+      props: { userId: currentUser.id },
     };
   }
 });
