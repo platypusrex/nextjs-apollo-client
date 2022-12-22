@@ -218,20 +218,26 @@ that should be used to hydrate any Next.js page component with data.
 #### Args
 Below is a table that describes the accepted arguments.
 
-| **Property**        | **Type**                                                                                                                                       | **Required**                                                  |
-|---------------------|------------------------------------------------------------------------------------------------------------------------------------------------|---------------------------------------------------------------|
-| hydrateQueries      | [HydrateQueries<THydrationMap>](https://github.com/platypusrex/nextjs-apollo-client/blob/e7bff6af8b0c90aea015db3ef3ebd99c6379493d/src/types/index.ts#L73) | no (if not provided all queries will be made on the client)   |
-| onClientInitialized | [ClientInitFn<TProps>](https://github.com/platypusrex/nextjs-apollo-client/blob/e7bff6af8b0c90aea015db3ef3ebd99c6379493d/src/types/index.ts#L74)  | no                                                         |
-| onHydrationComplete | [(results: HydrationResults) => ServerSidePropsResult<TProps>](https://github.com/platypusrex/nextjs-apollo-client/blob/e7bff6af8b0c90aea015db3ef3ebd99c6379493d/src/types/index.ts#L75)  | no                 |
+| **Property**        | **Type**                                                                                                                                                                                                 | **Required**                                                |
+|---------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|-------------------------------------------------------------|
+| hydrateQueries      | [HydrateQueries<THydrationMap>](https://github.com/platypusrex/nextjs-apollo-client/blob/e7bff6af8b0c90aea015db3ef3ebd99c6379493d/src/types/index.ts#L73)                                                | no (if not provided all queries will be made on the client) |
+| onClientInitialized | [ClientInitFn<TProps>](https://github.com/platypusrex/nextjs-apollo-client/blob/e7bff6af8b0c90aea015db3ef3ebd99c6379493d/src/types/index.ts#L74)                                                         | no                                                          |
+| onHydrationComplete | [(results: HydrationResponse<THydrationMap>) => ServerSidePropsResult<TProps>](https://github.com/platypusrex/nextjs-apollo-client/blob/ad5af151c15f32205c5cb71e3d2cbcbfa6c6361c/src/types/index.ts#L72) | no                                                          |
 
 ```ts
 export interface GetServerSideApolloPropsOptions<
-  TProps = Record<string, any> & GetServerSideApolloProps,
-  THydrationMap = never
+  THydrationMap extends QueryHydrationMap,
+  THydrationMapKeys = any,
+  TProps = Record<string, any>
 > {
-  hydrateQueries?: HydrateQueries<THydrationMap>;
-  onClientInitialized?: ClientInitFn<TProps>;
-  onHydrationComplete?: (results: HydrationResults) => ServerSidePropsResult<TProps>;
+  hydrateQueries?: HydrateQueries<THydrationMapKeys>;
+  onClientInitialized?: (
+    ctx: GetServerSidePropsContext,
+    apolloClient: ApolloClient<NormalizedCacheObject>
+  ) => ServerSidePropsResult<TProps>;
+  onHydrationComplete?: (
+    results: HydrationResponse<THydrationMap>
+  ) => ServerSidePropsResult<TProps>;
 }
 ```
 
@@ -305,7 +311,9 @@ export const getServerSideProps = getServerSideApolloProps<PageProps>({
 
 The second and last callback option is `onHydrationComplete`. This is used in conjunction with `hydrateQueries` and should
 be more commonly used than `onClientInitialized`. The callback is run after any queries from `hydrateQueries` are run and
-returns a list of the results and/or errors from each query.
+returns either the result of any hydration operation or errors from each query. Results for hydrated operations are mapped
+to there operation name. If you have provided the hydration map generic to your instance of `NextApolloClient`, you
+will get proper auto-completion for any of your hydrated operations.
 
 A return is again not required, but you can provide the
 same [return value](https://nextjs.org/docs/api-reference/data-fetching/get-server-side-props#getserversideprops-return-values)
@@ -318,14 +326,14 @@ interface PageProps {
 
 export const getServerSideProps = getServerSideApolloProps<PageProps>({
   hydrateQueries: ['user'],
-  onHydrationComplete: ({ results, errors }) => {
-    const result: ApolloQueryResult<UserQuery> | undefined = results?.find(result => result.data.user);
+  onHydrationComplete: ({ user, errors }) => {
+    const currentUser = user?.data.user;
     
     if (errors.length) {
       return { notFound: true };
     }
 
-    if (!result?.data.user) {
+    if (!currentUser) {
       return {
         redirect: {
           destination: '/',
@@ -335,7 +343,7 @@ export const getServerSideProps = getServerSideApolloProps<PageProps>({
     }
 
     return {
-      props: { userId: result.data.user.id },
+      props: { userId: currentUser.id },
     };
   }
 });
