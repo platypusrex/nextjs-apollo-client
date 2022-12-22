@@ -306,8 +306,8 @@ export const getServerSideProps = getServerSideApolloProps<PageProps>({
 The second and last callback option is `onHydrationComplete`. This is used in conjunction with `hydrateQueries` and should
 be more commonly used than `onClientInitialized`. The callback is run after any queries from `hydrateQueries` are run and
 returns either the result of any hydration operation or errors from each query. Results for hydrated operations are mapped
-to there operation name. If you have provided your instance of `NextApolloClient` the generic (`typeof hydrationMap`), you
-will get proper auto-completion for any of the operation names.
+to there operation name. If you have provided the hydration map generic to your instance of `NextApolloClient`, you
+will get proper auto-completion for any of your hydrated operations.
 
 A return is again not required, but you can provide the
 same [return value](https://nextjs.org/docs/api-reference/data-fetching/get-server-side-props#getserversideprops-return-values)
