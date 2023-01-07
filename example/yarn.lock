@@ -3678,9 +3678,10 @@ next@12.1.5:
     "@next/swc-win32-ia32-msvc" "12.1.5"
     "@next/swc-win32-x64-msvc" "12.1.5"
 
-"nextjs-apollo-client@file:../nextjs-apollo-client-0.3.0-alpha.0.tgz":
-  version "0.3.0-alpha.0"
-  resolved "file:../nextjs-apollo-client-0.3.0-alpha.0.tgz#f6002d54d46d9cc42d05a7fd0fe2ca578558073a"
+nextjs-apollo-client@latest:
+  version "0.3.1"
+  resolved "https://registry.yarnpkg.com/nextjs-apollo-client/-/nextjs-apollo-client-0.3.1.tgz#40db4b1c9f8671a2560690eeff70cb12635927f5"
+  integrity sha512-E8Zpz7TUDPbnBxabUb3UTa9Z1EiIY57/MaBVpKKX3pC0o/R1dHGYaVRGN7zeUbVgJamJwGEdhfL8dnZ2pOoG+A==
   dependencies:
     deepmerge "^4.2.2"
     lodash-es "^4.17.21"
