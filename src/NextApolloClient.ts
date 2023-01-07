@@ -1,5 +1,5 @@
 import merge from 'deepmerge';
-import isEqual from 'lodash/isEqual';
+import isEqual from 'lodash.isequal';
 import { useMemo } from 'react';
 import { AppProps } from 'next/app';
 import { GetServerSideProps, GetServerSidePropsContext, GetServerSidePropsResult } from 'next';
